@@ -1,0 +1,81 @@
+body{
+    background-color: #E5E5E5;
+}
+
+#root{
+    width: 100%;
+    max-width: 1000px;
+    margin: 0px auto;
+    flex-wrap: wrap;
+    background-color: white;
+    height: 100vh;
+}
+.ant-tabs,
+.ant-tabs-content,
+.ant-tabs-tabpane,
+.ant-layout{
+    height: 100%;
+}
+.ant-tabs-nav::before{
+    display: none;
+}
+
+.ant-tabs-nav-wrap{
+    justify-content: center;
+}
+
+.ant-tabs-nav-list::before{
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    border-bottom: 1px solid #f0f0f0;
+    content: "";
+}
+
+.ant-layout{
+    background: white;
+}
+.ant-layout-header{
+    height: unset;
+    line-height: unset;
+    padding: 0 32px;
+    background: white;
+}
+
+.ant-layout-content{
+    margin: 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.ant-layout-footer{
+    margin: 0 0 16px;
+    padding: unset;
+    display: flex;
+    justify-content: center;
+    background: white;
+}
+
+.ant-card{
+    width: calc(50% - 32px);
+    height: calc(33.33% - 32px);
+    margin: 16px;
+}
+
+.ant-card-body{
+    padding: unset;
+}
+
+.ant-pagination li button{
+    border: none !important;
+    font-size: 16px !important;
+}
+
+.ant-spin{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(4);
+}
