@@ -58,44 +58,42 @@ export default class App extends Component {
     const { films, totalPages } = this.state;
     const page = Math.floor((value * 6) / 20);
 
-    let Arr = [[], [], [], [], []];
+    let Arr = [[], [], []];
 
     if (page > 0) {
-      Arr[1] = films.slice((page - 1) * 20, (page - 1) * 20 + 20);
+      Arr[0] = films.slice((page - 1) * 20, (page - 1) * 20 + 20);
     }
-    Arr[2] = films.slice(page * 20, page * 20 + 20);
+    Arr[1] = films.slice(page * 20, page * 20 + 20);
 
     if (page < totalPages) {
-      Arr[3] = films.slice((page + 1) * 20, (page + 1) * 20 + 20);
+      Arr[2] = films.slice((page + 1) * 20, (page + 1) * 20 + 20);
+    }
+
+    if (Arr[0].includes(undefined)) {
+      this.movieApi.setPage(page);
+      await this.movieApi.getMovies().then((result) => {
+        Arr[0] = result.results;
+      });
     }
 
     if (Arr[1].includes(undefined)) {
-      this.movieApi.setPage(page);
+      this.movieApi.setPage(page + 1);
       await this.movieApi.getMovies().then((result) => {
         Arr[1] = result.results;
       });
     }
 
     if (Arr[2].includes(undefined)) {
-      this.movieApi.setPage(page + 1);
+      this.movieApi.setPage(page + 2);
       await this.movieApi.getMovies().then((result) => {
         Arr[2] = result.results;
       });
-    } else {
-      Arr[2] = films.slice(page * 20, page * 20 + 20);
     }
 
-    if (Arr[3].includes(undefined)) {
-      this.movieApi.setPage(page + 2);
-      await this.movieApi.getMovies().then((result) => {
-        Arr[3] = result.results;
-      });
-    }
-
-    Arr[0] = films.slice(0, page * 20 - Number(Arr[1].length > 0) * 20);
-    Arr[4] = films.slice((page + 1) * 20 + Number(Arr[3].length > 0) * 20, films.length);
+    const Arr1 = films.slice(0, page * 20 - Number(Arr[0].length > 0) * 20);
+    const Arr2 = films.slice((page + 1) * 20 + Number(Arr[2].length > 0) * 20, films.length);
     this.setState(() => ({
-      films: [...Arr.flat()],
+      films: [...Arr1, ...Arr.flat(), ...Arr2],
       minValue: (value - 1) * FILMS_PER_PAGE,
       maxValue: value * FILMS_PER_PAGE,
       loading: false,

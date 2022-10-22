@@ -1,10 +1,20 @@
-import { Card as AntdCard, Layout, Tag, Rate } from 'antd';
+import { Card as AntdCard, Layout, Tag, Rate, Typography } from 'antd';
+import { intlFormat } from 'date-fns';
 
 import styles from './Card.module.css';
 
+const { Paragraph } = Typography;
 const { Header, Footer, Sider, Content } = Layout;
 
 function Card({ title, releaseDate, overview, voteAverage, poster }) {
+  const releaseDateDecrypted = intlFormat(
+    new Date(releaseDate),
+    { year: 'numeric', month: 'long', day: 'numeric' },
+    {
+      locale: 'en-EN',
+    }
+  );
+
   return (
     <AntdCard className={styles.card} bordered={false}>
       <Layout>
@@ -14,14 +24,16 @@ function Card({ title, releaseDate, overview, voteAverage, poster }) {
         <Layout className={styles.layout}>
           <Header>
             <h2>{title}</h2>
-            <time>{releaseDate}</time>
+            <time>{releaseDateDecrypted}</time>
             <div>
               <Tag>Tag 1</Tag>
               <Tag>Tag 2</Tag>
               <Tag>Tag 3</Tag>
             </div>
           </Header>
-          <Content>{overview}</Content>
+          <Content>
+            <Paragraph ellipsis={{ rows: 4 }}>{overview}</Paragraph>
+          </Content>
           <Footer>
             <Rate allowHalf defaultValue={voteAverage} count={10} disabled className={styles.rate} />
           </Footer>
