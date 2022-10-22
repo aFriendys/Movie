@@ -14,7 +14,6 @@ export default class Searchbar extends Component {
 
   render() {
     const { label } = this.state;
-    // eslint-disable-next-line no-unused-vars
     const { fetchData } = this.props;
     return (
       <Header>

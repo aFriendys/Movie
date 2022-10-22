@@ -1,7 +1,3 @@
-/* eslint-disable prefer-const */
-/* eslint-disable react/no-unused-state */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/no-unused-class-component-methods */
 import React, { Component } from 'react';
 import { Tabs, Layout, Pagination, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -16,7 +12,6 @@ const loader = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 // Define global variables:
 const FILMS_PER_PAGE = 6;
 
-// eslint-disable-next-line react/prefer-stateless-function
 export default class App extends Component {
   movieApi = new MovieApiService();
 
@@ -58,7 +53,7 @@ export default class App extends Component {
     const { films, totalPages } = this.state;
     const page = Math.floor((value * 6) / 20);
 
-    let Arr = [[], [], []];
+    const Arr = [[], [], []];
 
     if (page > 0) {
       Arr[0] = films.slice((page - 1) * 20, (page - 1) * 20 + 20);
