@@ -2,7 +2,7 @@ import { Input, Layout } from 'antd';
 import { Component } from 'react';
 
 const { Header } = Layout;
-export default class Searchbar extends Component {
+export default class SearchBar extends Component {
   constructor(props) {
     super(props);
     this.state = { label: '' };

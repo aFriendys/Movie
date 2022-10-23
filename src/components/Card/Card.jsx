@@ -1,6 +1,8 @@
 import { Card as AntdCard, Layout, Tag, Rate, Typography } from 'antd';
 import { intlFormat } from 'date-fns';
 
+import ProgressiveImage from '../ProgressiveImage';
+
 import styles from './Card.module.css';
 
 const { Paragraph } = Typography;
@@ -19,7 +21,7 @@ function Card({ title, releaseDate, overview, voteAverage, poster }) {
     <AntdCard className={styles.card} bordered={false}>
       <Layout>
         <Sider className={styles.aside}>
-          <img alt="film preview" src={`https://image.tmdb.org/t/p/w500${poster}`} />
+          <ProgressiveImage path={poster} />
         </Sider>
         <Layout className={styles.layout}>
           <Header>

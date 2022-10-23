@@ -4,11 +4,11 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import MovieApiService from '../../services/MovieApiService';
 import Card from '../Card';
-import Searchbar from '../Searchbar';
+import SearchBar from '../Searchbar';
 import DetectOffline from '../DetectOffline';
 
 const { Footer, Content } = Layout;
-const loader = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+const loader = <LoadingOutlined style={{ fontSize: 40 }} spin />;
 
 // Define global variables:
 const FILMS_PER_PAGE = 6;
@@ -154,7 +154,7 @@ export default class App extends Component {
         <Tabs.TabPane tab="Search" key="1">
           <DetectOffline>
             <Layout>
-              <Searchbar fetchData={this.fetchData} />
+              <SearchBar fetchData={this.fetchData} />
               <Content>{loading ? <Spin indicator={loader} /> : films2}</Content>
               <Footer>
                 <Pagination
