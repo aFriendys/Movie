@@ -5,6 +5,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import MovieApiService from '../../services/MovieApiService';
 import Card from '../Card';
 import Searchbar from '../Searchbar';
+import DetectOffline from '../DetectOffline';
 
 const { Footer, Content } = Layout;
 const loader = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -151,23 +152,26 @@ export default class App extends Component {
     return (
       <Tabs defaultActiveKey="1">
         <Tabs.TabPane tab="Search" key="1">
-          <Layout>
-            <Searchbar fetchData={this.fetchData} />
-            <Content>{loading ? <Spin indicator={loader} /> : films2}</Content>
-            <Footer>
-              <Pagination
-                defaultCurrent={1}
-                total={possibleValue}
-                disabled={loading || !films.length}
-                pageSize={6}
-                showSizeChanger={false}
-                onChange={this.changePaginationTab}
-                current={currentTab}
-              />
-            </Footer>
-          </Layout>
+          <DetectOffline>
+            <Layout>
+              <Searchbar fetchData={this.fetchData} />
+              <Content>{loading ? <Spin indicator={loader} /> : films2}</Content>
+              <Footer>
+                <Pagination
+                  size="small"
+                  defaultCurrent={1}
+                  total={possibleValue}
+                  disabled={loading || !films.length}
+                  pageSize={6}
+                  showSizeChanger={false}
+                  onChange={this.changePaginationTab}
+                  current={currentTab}
+                />
+              </Footer>
+            </Layout>
+          </DetectOffline>
         </Tabs.TabPane>
-        <Tabs.TabPane tab="Rated" key="2">
+        <Tabs.TabPane tab="Rated" key="2" disabled>
           Content of Tab Pane 2
         </Tabs.TabPane>
       </Tabs>
