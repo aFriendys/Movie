@@ -13,13 +13,16 @@ export default class ProgressiveImage extends Component {
   render() {
     const { loaded } = this.state;
     const { path } = this.props;
+
+    const poster =
+      path === null ? 'https://critics.io/img/movies/poster-placeholder.png' : `https://image.tmdb.org/t/p/w500${path}`;
     return (
       <>
         {loaded ? null : <Spin indicator={loader} />}
         <img
           alt="film preview"
           style={loaded ? {} : { display: 'none' }}
-          src={`https://image.tmdb.org/t/p/w500${path}`}
+          src={poster}
           onLoad={() => this.setState({ loaded: true })}
           onError={(e) => {
             console.log(e);

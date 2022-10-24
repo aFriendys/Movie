@@ -9,13 +9,16 @@ const { Paragraph } = Typography;
 const { Header, Footer, Sider, Content } = Layout;
 
 function Card({ title, releaseDate, overview, voteAverage, poster }) {
-  const releaseDateDecrypted = intlFormat(
-    new Date(releaseDate),
-    { year: 'numeric', month: 'long', day: 'numeric' },
-    {
-      locale: 'en-EN',
-    }
-  );
+  let releaseDateDecrypted = 'no data';
+  if (releaseDate !== '') {
+    releaseDateDecrypted = intlFormat(
+      new Date(releaseDate),
+      { year: 'numeric', month: 'long', day: 'numeric' },
+      {
+        locale: 'en-EN',
+      }
+    );
+  }
 
   return (
     <AntdCard className={styles.card} bordered={false}>
