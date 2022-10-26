@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Card as AntdCard, Layout, Tag, Rate, Typography, Progress } from 'antd';
 import { intlFormat } from 'date-fns';
 

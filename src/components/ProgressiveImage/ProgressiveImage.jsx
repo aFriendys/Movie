@@ -24,9 +24,6 @@ export default class ProgressiveImage extends Component {
           style={loaded ? {} : { display: 'none' }}
           src={poster}
           onLoad={() => this.setState({ loaded: true })}
-          onError={(e) => {
-            console.log(e);
-          }}
         />
       </>
     );

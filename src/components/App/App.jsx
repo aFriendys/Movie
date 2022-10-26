@@ -65,42 +65,39 @@ export default class App extends Component {
     const { films, totalPages } = this.state;
     const page = Math.floor((value * 6) / 20);
 
-    const Arr = [[], [], []];
+    const arr = [
+      page > 0 ? films.slice((page - 1) * 20, (page - 1) * 20 + 20) : [],
+      films.slice(page * 20, page * 20 + 20),
+      page < totalPages ? films.slice((page + 1) * 20, (page + 1) * 20 + 20) : [],
+    ];
 
-    if (page > 0) {
-      Arr[0] = films.slice((page - 1) * 20, (page - 1) * 20 + 20);
-    }
-    Arr[1] = films.slice(page * 20, page * 20 + 20);
-
-    if (page < totalPages) {
-      Arr[2] = films.slice((page + 1) * 20, (page + 1) * 20 + 20);
-    }
-
-    if (Arr[0].includes(undefined)) {
+    if (arr[0].includes(undefined)) {
       this.movieApi.setPage(page);
       await this.movieApi.getMovies().then((result) => {
-        Arr[0] = result.results;
+        arr[0] = result.results;
       });
     }
 
-    if (Arr[1].includes(undefined)) {
+    if (arr[1].includes(undefined)) {
       this.movieApi.setPage(page + 1);
       await this.movieApi.getMovies().then((result) => {
-        Arr[1] = result.results;
+        arr[1] = result.results;
       });
     }
 
-    if (Arr[2].includes(undefined)) {
+    if (arr[2].includes(undefined)) {
       this.movieApi.setPage(page + 2);
       await this.movieApi.getMovies().then((result) => {
-        Arr[2] = result.results;
+        arr[2] = result.results;
       });
     }
 
-    const Arr1 = films.slice(0, page * 20 - Number(Arr[0].length > 0) * 20);
-    const Arr2 = films.slice((page + 1) * 20 + Number(Arr[2].length > 0) * 20, films.length);
+    const currentFilms = [
+      films.slice(0, page * 20 - Number(arr[0].length > 0) * 20),
+      films.slice((page + 1) * 20 + Number(arr[2].length > 0) * 20, films.length),
+    ];
     this.setState(() => ({
-      films: [...Arr1, ...Arr.flat(), ...Arr2],
+      films: [...currentFilms[0], ...arr.flat(), ...currentFilms[1]],
       minValue: (value - 1) * FILMS_PER_PAGE,
       maxValue: value * FILMS_PER_PAGE,
       loading: false,
@@ -133,31 +130,36 @@ export default class App extends Component {
 
     return (
       <MyContextProvider value={genres}>
-        <Tabs defaultActiveKey="1">
-          <Tabs.TabPane tab="Search" key="1">
-            <DetectOffline>
-              <Layout>
-                <SearchBar fetchData={this.fetchData} clearFilms={this.clearFilms} />
-                <Content>{loading ? <Spin indicator={loader} /> : filmsDecrypted}</Content>
-                <Footer>
-                  <Pagination
-                    size="small"
-                    defaultCurrent={1}
-                    total={possibleValue}
-                    disabled={loading || !films.length}
-                    pageSize={6}
-                    showSizeChanger={false}
-                    onChange={this.changePaginationTab}
-                    current={currentTab}
-                  />
-                </Footer>
-              </Layout>
-            </DetectOffline>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Rated" key="2" disabled>
-            Content of Tab Pane 2
-          </Tabs.TabPane>
-        </Tabs>
+        <Tabs
+          defaultActiveKey="1"
+          items={[
+            {
+              label: 'Search',
+              key: 'search',
+              children: (
+                <DetectOffline>
+                  <Layout>
+                    <SearchBar fetchData={this.fetchData} clearFilms={this.clearFilms} />
+                    <Content>{loading ? <Spin indicator={loader} /> : filmsDecrypted}</Content>
+                    <Footer>
+                      <Pagination
+                        size="small"
+                        defaultCurrent={1}
+                        total={possibleValue}
+                        disabled={loading || !films.length}
+                        pageSize={6}
+                        showSizeChanger={false}
+                        onChange={this.changePaginationTab}
+                        current={currentTab}
+                      />
+                    </Footer>
+                  </Layout>
+                </DetectOffline>
+              ),
+            },
+            { label: 'Rated', key: 'rated', children: <div>asdf</div>, disabled: true },
+          ]}
+        />
       </MyContextProvider>
     );
   }
