@@ -51,6 +51,7 @@
 .layout header h2{
     margin-bottom: 5px;
     font-size: 20px;
+    padding-right: 20px;
 }   
 .layout header time{
     margin-bottom: 5px;
@@ -72,4 +73,14 @@
 
 .rate li{
     margin-right: 4px !important;
+}
+
+.progress{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.progress svg{
+    transform: scale(-1, 1);
 }

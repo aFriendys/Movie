@@ -1,33 +1,22 @@
 import { Input, Layout } from 'antd';
-import { Component } from 'react';
+import { debounce } from 'lodash';
 
 const { Header } = Layout;
-export default class SearchBar extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { label: '' };
-  }
-
-  onInputChange = (e) => {
-    this.setState(() => ({ label: e.target.value }));
+function SearchBar({ fetchData, clearFilms }) {
+  const onInputChange = (e) => {
+    if (e.target.value === '') {
+      clearFilms();
+    } else {
+      fetchData(e?.target?.value);
+    }
   };
 
-  render() {
-    const { label } = this.state;
-    const { fetchData } = this.props;
-    return (
-      <Header>
-        <Input
-          placeholder="Basic usage"
-          value={label}
-          onChange={this.onInputChange}
-          onKeyDown={(e) => {
-            if (e.code === 'Enter') {
-              fetchData(label);
-            }
-          }}
-        />
-      </Header>
-    );
-  }
+  const debouncedOnchange = debounce(onInputChange, 1000);
+  return (
+    <Header>
+      <Input placeholder="Search a film..." onChange={debouncedOnchange} allowClear />
+    </Header>
+  );
 }
+
+export default SearchBar;

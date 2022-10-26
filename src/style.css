@@ -74,3 +74,14 @@ body{
     top: 50%;
     transform: translate(-50%, -50%) scale(4);
 }
+
+.ant-alert-with-description{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.ant-layout-content{
+    position: relative;
+}

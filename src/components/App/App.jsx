@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Tabs, Layout, Pagination, Spin } from 'antd';
+import { Tabs, Layout, Pagination, Spin, Alert } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import MovieApiService from '../../services/MovieApiService';
 import Card from '../Card';
 import SearchBar from '../Searchbar';
 import DetectOffline from '../DetectOffline';
+import { MyContextProvider } from '../MyContext/MyContext';
 
 const { Footer, Content } = Layout;
 const loader = <LoadingOutlined style={{ fontSize: 40 }} spin />;
@@ -24,11 +25,21 @@ export default class App extends Component {
       minValue: 0,
       maxValue: FILMS_PER_PAGE,
       possibleValue: 60,
+      currentTab: 1,
+      triedSearch: false,
     };
   }
 
+  componentDidMount() {
+    this.movieApi.getGenres().then((result) => {
+      this.setState(() => ({ genres: result.genres }));
+    });
+  }
+
+  clearFilms = () => this.setState({ films: [], currentTab: 1, possibleValue: 60 });
+
   fetchData = (query) => {
-    this.setState(() => ({ loading: true }));
+    this.setState(() => ({ loading: true, triedSearch: true }));
     this.movieApi.setPage(1);
     this.movieApi.newQuery(query);
     this.movieApi.getMovies().then((films) => {
@@ -97,48 +108,19 @@ export default class App extends Component {
     }));
   };
 
-  // changePaginationTab = (value) => {
-  //   this.setState(() => ({ loading: true }));
-  //   const { films, possibleValue } = this.state;
-  //   const page = Math.floor((value * 6) / 20);
-  //   const prevPage = films.slice((value - 1) * 6 - 6, (value - 1) * 6);
-  //   console.log(prevPage, prevPage.includes(undefined));
-  //   const containsUndefined = films.slice(value * 6 - 6, value * 6).includes(undefined);
-  //   if (containsUndefined) {
-  //     this.movieApi.setPage(page);
-  //     this.movieApi.getMovies().then((result) => {
-  //       const newArr0 = films.slice(0, page * 20);
-  //       const newArr1 = films.slice((page + 1) * 20, films.length - 1);
-  //       let finish = possibleValue;
-  //       if (value * FILMS_PER_PAGE < finish) {
-  //         finish = value * FILMS_PER_PAGE;
-  //       }
-  //       this.setState(() => ({
-  //         films: [...newArr0, ...result.results, ...newArr1],
-  //         minValue: (value - 1) * FILMS_PER_PAGE,
-  //         maxValue: finish,
-  //         loading: false,
-  //         currentTab: value,
-  //       }));
-  //     });
-  //   } else {
-  //     this.setState(() => ({
-  //       minValue: (value - 1) * FILMS_PER_PAGE,
-  //       maxValue: value * FILMS_PER_PAGE,
-  //       loading: false,
-  //       currentTab: value,
-  //     }));
-  //   }
-  // };
-
   render() {
-    const { films, loading, minValue, maxValue, possibleValue, currentTab } = this.state;
-    let films2 = [];
+    const { films, loading, minValue, maxValue, possibleValue, currentTab, genres, triedSearch } = this.state;
+    let filmsDecrypted = triedSearch ? (
+      <Alert message="Error" description="The search has not given any results." type="warning" showIcon />
+    ) : (
+      <Alert message="Info" description="Enter your search query above to start" type="info" showIcon />
+    );
     if (films.length > 0) {
-      films2 = films
+      filmsDecrypted = films
         .slice(minValue, maxValue)
         .map((film) => (
           <Card
+            genreIds={film.genre_ids}
             title={film.title}
             releaseDate={film.release_date}
             overview={film.overview}
@@ -150,31 +132,33 @@ export default class App extends Component {
     }
 
     return (
-      <Tabs defaultActiveKey="1">
-        <Tabs.TabPane tab="Search" key="1">
-          <DetectOffline>
-            <Layout>
-              <SearchBar fetchData={this.fetchData} />
-              <Content>{loading ? <Spin indicator={loader} /> : films2}</Content>
-              <Footer>
-                <Pagination
-                  size="small"
-                  defaultCurrent={1}
-                  total={possibleValue}
-                  disabled={loading || !films.length}
-                  pageSize={6}
-                  showSizeChanger={false}
-                  onChange={this.changePaginationTab}
-                  current={currentTab}
-                />
-              </Footer>
-            </Layout>
-          </DetectOffline>
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="Rated" key="2" disabled>
-          Content of Tab Pane 2
-        </Tabs.TabPane>
-      </Tabs>
+      <MyContextProvider value={genres}>
+        <Tabs defaultActiveKey="1">
+          <Tabs.TabPane tab="Search" key="1">
+            <DetectOffline>
+              <Layout>
+                <SearchBar fetchData={this.fetchData} clearFilms={this.clearFilms} />
+                <Content>{loading ? <Spin indicator={loader} /> : filmsDecrypted}</Content>
+                <Footer>
+                  <Pagination
+                    size="small"
+                    defaultCurrent={1}
+                    total={possibleValue}
+                    disabled={loading || !films.length}
+                    pageSize={6}
+                    showSizeChanger={false}
+                    onChange={this.changePaginationTab}
+                    current={currentTab}
+                  />
+                </Footer>
+              </Layout>
+            </DetectOffline>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Rated" key="2" disabled>
+            Content of Tab Pane 2
+          </Tabs.TabPane>
+        </Tabs>
+      </MyContextProvider>
     );
   }
 }
