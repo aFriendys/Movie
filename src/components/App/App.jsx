@@ -51,7 +51,7 @@ export default class App extends Component {
           ).fill(undefined),
         ],
         loading: false,
-        possibleValue: films.total_results,
+        possibleValue: films.total_results === 0 ? 60 : films.total_results,
         minValue: 0,
         maxValue: FILMS_PER_PAGE,
         currentTab: 1,
