@@ -60,7 +60,7 @@ body{
 
 .ant-card{
     width: calc(50% - 32px);
-    height: calc(33.33% - 32px);
+    min-height: 280px;
     margin: 16px;
 }
 

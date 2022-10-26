@@ -61,9 +61,10 @@ export default class App extends Component {
   };
 
   changePaginationTab = async (value) => {
+    window.scroll(0, 0);
     this.setState(() => ({ loading: true }));
     const { films, totalPages } = this.state;
-    const page = Math.floor((value * 6) / 20);
+    const page = Math.floor((value * FILMS_PER_PAGE) / 20);
 
     const arr = [
       page > 0 ? films.slice((page - 1) * 20, (page - 1) * 20 + 20) : [],
@@ -138,7 +139,7 @@ export default class App extends Component {
               key: 'search',
               children: (
                 <DetectOffline>
-                  <Layout>
+                  <Layout style={{ height: 'unset', minHeight: '100%' }}>
                     <SearchBar fetchData={this.fetchData} clearFilms={this.clearFilms} />
                     <Content>{loading ? <Spin indicator={loader} /> : filmsDecrypted}</Content>
                     <Footer>
@@ -147,7 +148,7 @@ export default class App extends Component {
                         defaultCurrent={1}
                         total={possibleValue}
                         disabled={loading || !films.length}
-                        pageSize={6}
+                        pageSize={FILMS_PER_PAGE}
                         showSizeChanger={false}
                         onChange={this.changePaginationTab}
                         current={currentTab}

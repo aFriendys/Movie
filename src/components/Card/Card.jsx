@@ -33,7 +33,6 @@ function Card({ title, releaseDate, overview, voteAverage, poster, genreIds }) {
       }
     );
   }
-
   return (
     <AntdCard className={styles.card} bordered={false}>
       <Layout>
@@ -69,7 +68,7 @@ function Card({ title, releaseDate, overview, voteAverage, poster, genreIds }) {
             />
           </Header>
           <Content>
-            <Paragraph ellipsis={{ rows: 4 }}>{overview}</Paragraph>
+            <Paragraph ellipsis={{ rows: 5 }}>{overview}</Paragraph>
           </Content>
           <Footer>
             <Rate allowHalf defaultValue={0} count={10} className={styles.rate} allowClear />
