@@ -7,7 +7,7 @@ function SearchBar({ fetchData, clearFilms }) {
     if (e.target.value === '') {
       clearFilms();
     } else {
-      fetchData(e.target.value);
+      fetchData(e.target.value, 1);
     }
   };
 

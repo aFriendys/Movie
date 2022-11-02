@@ -2,7 +2,7 @@ import { Card as AntdCard, Layout, Tag, Rate, Typography, Progress } from 'antd'
 import { intlFormat } from 'date-fns';
 
 import ProgressiveImage from '../ProgressiveImage';
-import { MyContextConsumer } from '../MyContext/MyContext';
+import { MyContextConsumer } from '../MyContext';
 
 import styles from './Card.module.css';
 
@@ -22,9 +22,9 @@ const setProgressColor = (value) => {
   return '#E90000';
 };
 
-function Card({ title, releaseDate, overview, voteAverage, poster, genreIds }) {
+function Card({ title, releaseDate, overview, voteAverage, poster, genreIds, addRated, userRate, id }) {
   let releaseDateDecrypted = 'no data';
-  if (releaseDate !== '') {
+  if (releaseDate && releaseDate !== '') {
     releaseDateDecrypted = intlFormat(
       new Date(releaseDate),
       { year: 'numeric', month: 'long', day: 'numeric' },
@@ -71,7 +71,29 @@ function Card({ title, releaseDate, overview, voteAverage, poster, genreIds }) {
             <Paragraph ellipsis={{ rows: 5 }}>{overview}</Paragraph>
           </Content>
           <Footer>
-            <Rate allowHalf defaultValue={0} count={10} className={styles.rate} allowClear />
+            <Rate
+              allowHalf
+              defaultValue={userRate || 0}
+              count={10}
+              className={styles.rate}
+              allowClear
+              onChange={(value) => {
+                if (addRated) {
+                  addRated({
+                    [id]: {
+                      userRate: value,
+                      title,
+                      release_date: releaseDate,
+                      overview,
+                      vote_average: voteAverage,
+                      poster_path: poster,
+                      genre_ids: genreIds,
+                      id,
+                    },
+                  });
+                }
+              }}
+            />
           </Footer>
         </Layout>
       </Layout>

@@ -6,9 +6,8 @@ body{
     width: 100%;
     max-width: 1000px;
     margin: 0px auto;
-    flex-wrap: wrap;
     background-color: white;
-    height: 100vh;
+    height: 100%;
 }
 .ant-tabs,
 .ant-tabs-content,
