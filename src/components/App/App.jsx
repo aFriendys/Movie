@@ -12,12 +12,6 @@ const { Footer, Content } = Layout;
 const loader = <LoadingOutlined style={{ fontSize: 40 }} spin />;
 
 export default class App extends Component {
-  static addRated = (newFilm) => {
-    let storedFilms = JSON.parse(localStorage.getItem('films'));
-    storedFilms = storedFilms === 'null' ? newFilm : { ...storedFilms, ...newFilm };
-    localStorage.setItem('films', JSON.stringify(storedFilms));
-  };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -27,16 +21,11 @@ export default class App extends Component {
       currentTab: 1,
       triedSearch: false,
     };
+    this.movieService = new MovieApiService();
   }
 
   componentDidMount() {
-    let apiKey = localStorage.getItem('apiKey');
-    if (!apiKey) {
-      apiKey = 'ef9b37af191a02261db8369a24706290';
-      localStorage.setItem('apiKey', apiKey);
-    }
-    this.movieService = new MovieApiService(apiKey);
-
+    this.movieService.createGuestSession();
     this.movieService.getGenres().then((result) => {
       this.setState(() => ({ genres: result.genres }));
     });
@@ -52,14 +41,20 @@ export default class App extends Component {
     if (page) {
       this.movieService.setPage(page);
     }
-    this.movieService.getMovies().then((films) => {
+    this.movieService.searchMovies().then((films) => {
       this.setState(() => ({
         films: [...films.results],
         loading: false,
-        possibleValue: films.total_results !== 0 ? films.total_results : 200,
+        possibleValue: films.total_results ? films.total_results : 200,
         currentTab: page || this.movieService.getPage(),
       }));
     });
+  };
+
+  changeTab = (value) => {
+    if (value === 'rated') {
+      this.movieService.getRatedMovies();
+    }
   };
 
   render() {
@@ -71,41 +66,25 @@ export default class App extends Component {
       <Alert message="Info" description="Enter your search query above to start" type="info" showIcon />
     );
     if (films.length) {
-      filmsDecrypted = films.map((film) => {
-        let storedRate = JSON.parse(localStorage.getItem('films'));
-        storedRate = storedRate?.[film.id]?.userRate || 0;
-        return (
-          <Card
-            id={film.id}
-            genreIds={film.genre_ids}
-            title={film.title}
-            releaseDate={film.release_date}
-            overview={film.overview}
-            voteAverage={film.vote_average}
-            poster={film.poster_path}
-            key={film.id}
-            addRated={App.addRated}
-            userRate={storedRate}
-          />
-        );
-      });
+      filmsDecrypted = films.map((film) => (
+        <Card
+          id={film.id}
+          genreIds={film.genre_ids}
+          title={film.title}
+          releaseDate={film.release_date}
+          overview={film.overview}
+          voteAverage={film.vote_average}
+          poster={film.poster_path}
+          key={film.id}
+          userRate={0}
+          rateMovie={this.movieService.rateMovie}
+        />
+      ));
     }
     return (
       <MyContextProvider value={genres}>
         <Tabs
-          onChange={(value) => {
-            if (value === 'search') {
-              if (this.movieService.getQuery()) {
-                this.fetchData();
-              } else {
-                this.setState(() => ({ films: [] }));
-              }
-            }
-            if (value === 'rated') {
-              const rated = JSON.parse(localStorage.getItem('films'));
-              this.setState(() => ({ films: Object.values(rated) }));
-            }
-          }}
+          onChange={this.changeTab}
           defaultActiveKey="1"
           items={[
             {
@@ -137,7 +116,7 @@ export default class App extends Component {
               key: 'rated',
               children: (
                 <Layout style={{ height: 'unset', minHeight: '100%' }}>
-                  <Content>{filmsDecrypted}</Content>
+                  <Content>123</Content>
                 </Layout>
               ),
             },

@@ -1,21 +1,7 @@
 export default class MovieApiService {
-  constructor(apiKey) {
-    this.query = '';
+  constructor() {
     this.page = 1;
-    this.apiKey = apiKey;
-  }
-
-  /// TMP
-
-  async getMovies() {
-    let response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=${this.apiKey}&query=${this.query}&page=${this.page}`
-    );
-
-    if (response.ok) {
-      response = await response.json();
-    }
-    return response;
+    this.apiKey = 'ef9b37af191a02261db8369a24706290';
   }
 
   setPage(page) {
@@ -33,9 +19,16 @@ export default class MovieApiService {
   getPage() {
     return this.page;
   }
-  // END TMP
 
-  async searchMovies() {
+  createGuestSession = async () => {
+    let response = await fetch(`https://api.themoviedb.org/3/authentication/guest_session/new?api_key=${this.apiKey}`);
+    if (response.ok) {
+      response = await response.json();
+      this.sessionId = response.guest_session_id;
+    }
+  };
+
+  searchMovies = async () => {
     let response = await fetch(
       `https://api.themoviedb.org/3/search/movie?api_key=${this.apiKey}&query=${this.query}&page=${this.page}`
     );
@@ -44,24 +37,38 @@ export default class MovieApiService {
       response = await response.json();
     }
     return response;
-  }
+  };
 
-  async getGenres() {
+  getRatedMovies = async () => {
+    let response = await fetch(
+      `https://api.themoviedb.org/3/guest_session/${this.sessionId}/rated/movies?api_key=${this.apiKey}`
+    );
+
+    if (response.ok) {
+      response = await response.json();
+      console.log(response);
+    }
+  };
+
+  getGenres = async () => {
     let response = await fetch(`https://api.themoviedb.org/3/genre/movie/list?api_key=${this.apiKey}`);
 
     if (response.ok) {
       response = await response.json();
     }
     return response;
-  }
+  };
 
-  async rateMovie(id, value) {
-    await fetch(`https://api.themoviedb.org/3/movie/${id}/rating?api_key=<${this.apiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-      body: JSON.stringify({ value }),
-    });
-  }
+  rateMovie = async (id, value) => {
+    await fetch(
+      `https://api.themoviedb.org/3/movie/${id}/rating?api_key=${this.apiKey}&guest_session_id=${this.sessionId}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8',
+        },
+        body: JSON.stringify({ value }),
+      }
+    );
+  };
 }

@@ -22,7 +22,7 @@ const setProgressColor = (value) => {
   return '#E90000';
 };
 
-function Card({ title, releaseDate, overview, voteAverage, poster, genreIds, addRated, userRate, id }) {
+function Card({ title, releaseDate, overview, voteAverage, poster, genreIds, userRate, id, rateMovie }) {
   let releaseDateDecrypted = 'no data';
   if (releaseDate && releaseDate !== '') {
     releaseDateDecrypted = intlFormat(
@@ -78,20 +78,7 @@ function Card({ title, releaseDate, overview, voteAverage, poster, genreIds, add
               className={styles.rate}
               allowClear
               onChange={(value) => {
-                if (addRated) {
-                  addRated({
-                    [id]: {
-                      userRate: value,
-                      title,
-                      release_date: releaseDate,
-                      overview,
-                      vote_average: voteAverage,
-                      poster_path: poster,
-                      genre_ids: genreIds,
-                      id,
-                    },
-                  });
-                }
+                rateMovie(id, value);
               }}
             />
           </Footer>
