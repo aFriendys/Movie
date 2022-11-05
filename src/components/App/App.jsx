@@ -17,8 +17,9 @@ export default class App extends Component {
     this.state = {
       films: [],
       loading: false,
+      filmsRated: [],
+      loadingRated: false,
       possibleValue: 200,
-      currentTab: 1,
       triedSearch: false,
     };
     this.movieService = new MovieApiService();
@@ -31,34 +32,49 @@ export default class App extends Component {
     });
   }
 
-  clearFilms = () => this.setState({ films: [], currentTab: 1, possibleValue: 200 });
+  clearFilms = () => {
+    this.movieService.setPage('search', 1);
+    this.setState({ films: [], possibleValue: 200 });
+  };
+
+  searchRated = (page) => {
+    this.setState(() => ({ loadingRated: true }));
+    this.movieService.setPage('rated', page);
+
+    this.movieService.getRatedMovies().then((films) => {
+      this.setState(() => ({
+        filmsRated: [...films.results],
+        loadingRated: false,
+        possibleValue: films.total_results ? films.total_results : 200,
+      }));
+    });
+  };
 
   fetchData = (query, page) => {
     this.setState(() => ({ loading: true, triedSearch: true }));
     if (query) {
       this.movieService.setQuery(query);
     }
-    if (page) {
-      this.movieService.setPage(page);
-    }
+    this.movieService.setPage('search', page);
     this.movieService.searchMovies().then((films) => {
       this.setState(() => ({
         films: [...films.results],
         loading: false,
         possibleValue: films.total_results ? films.total_results : 200,
-        currentTab: page || this.movieService.getPage(),
       }));
     });
   };
 
   changeTab = (value) => {
     if (value === 'rated') {
-      this.movieService.getRatedMovies();
+      this.searchRated(this.movieService.getPage('rated'));
+    } else {
+      this.fetchData('', this.movieService.getPage('search'));
     }
   };
 
   render() {
-    const { films, loading, currentTab, possibleValue, genres, triedSearch } = this.state;
+    const { films, loading, possibleValue, genres, triedSearch, filmsRated, loadingRated } = this.state;
 
     let filmsDecrypted = triedSearch ? (
       <Alert message="Error" description="The search has not given any results." type="warning" showIcon />
@@ -81,6 +97,24 @@ export default class App extends Component {
         />
       ));
     }
+    const filmsRatedDecrypted = filmsRated.length ? (
+      filmsRated.map((film) => (
+        <Card
+          id={film.id}
+          genreIds={film.genre_ids}
+          title={film.title}
+          releaseDate={film.release_date}
+          overview={film.overview}
+          voteAverage={film.vote_average}
+          poster={film.poster_path}
+          key={film.id}
+          userRate={0}
+          rateMovie={this.movieService.rateMovie}
+        />
+      ))
+    ) : (
+      <Alert message="Info" description="Enter your search query above to start" type="info" showIcon />
+    );
     return (
       <MyContextProvider value={genres}>
         <Tabs
@@ -104,7 +138,7 @@ export default class App extends Component {
                         pageSize={20}
                         showSizeChanger={false}
                         onChange={(value) => this.fetchData('', value)}
-                        current={currentTab}
+                        current={this.movieService.getPage('search')}
                       />
                     </Footer>
                   </Layout>
@@ -116,7 +150,19 @@ export default class App extends Component {
               key: 'rated',
               children: (
                 <Layout style={{ height: 'unset', minHeight: '100%' }}>
-                  <Content>123</Content>
+                  <Content>{loadingRated ? <Spin indicator={loader} /> : filmsRatedDecrypted}</Content>
+                  <Footer>
+                    <Pagination
+                      size="small"
+                      defaultCurrent={1}
+                      total={possibleValue}
+                      disabled={loadingRated || !filmsRated.length}
+                      pageSize={20}
+                      showSizeChanger={false}
+                      onChange={(value) => this.searchRated(value)}
+                      current={this.movieService.getPage('rated')}
+                    />
+                  </Footer>
                 </Layout>
               ),
             },

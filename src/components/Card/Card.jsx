@@ -60,7 +60,7 @@ function Card({ title, releaseDate, overview, voteAverage, poster, genreIds, use
             </div>
             <Progress
               type="circle"
-              percent={voteAverage * 10}
+              percent={(voteAverage * 10).toFixed()}
               format={(percent) => percent / 10}
               width={30}
               className={styles.progress}
