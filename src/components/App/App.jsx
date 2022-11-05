@@ -26,6 +26,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    sessionStorage.clear();
     this.movieService.createGuestSession();
     this.movieService.getGenres().then((result) => {
       this.setState(() => ({ genres: result.genres }));
@@ -51,6 +52,9 @@ export default class App extends Component {
   };
 
   fetchData = (query, page) => {
+    if (!query && !this.movieService.getQuery()) {
+      return;
+    }
     this.setState(() => ({ loading: true, triedSearch: true }));
     if (query) {
       this.movieService.setQuery(query);
@@ -92,7 +96,6 @@ export default class App extends Component {
           voteAverage={film.vote_average}
           poster={film.poster_path}
           key={film.id}
-          userRate={0}
           rateMovie={this.movieService.rateMovie}
         />
       ));

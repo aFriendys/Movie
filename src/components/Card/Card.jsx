@@ -22,7 +22,7 @@ const setProgressColor = (value) => {
   return '#E90000';
 };
 
-function Card({ title, releaseDate, overview, voteAverage, poster, genreIds, userRate, id, rateMovie }) {
+function Card({ title, releaseDate, overview, voteAverage, poster, genreIds, id, rateMovie }) {
   let releaseDateDecrypted = 'no data';
   if (releaseDate && releaseDate !== '') {
     releaseDateDecrypted = intlFormat(
@@ -33,6 +33,7 @@ function Card({ title, releaseDate, overview, voteAverage, poster, genreIds, use
       }
     );
   }
+
   return (
     <AntdCard className={styles.card} bordered={false}>
       <Layout>
@@ -73,11 +74,11 @@ function Card({ title, releaseDate, overview, voteAverage, poster, genreIds, use
           <Footer>
             <Rate
               allowHalf
-              defaultValue={userRate || 0}
+              defaultValue={Number(sessionStorage.getItem(id)) || 0}
               count={10}
               className={styles.rate}
-              allowClear
               onChange={(value) => {
+                sessionStorage.setItem(id, value);
                 rateMovie(id, value);
               }}
             />
