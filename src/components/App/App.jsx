@@ -77,6 +77,17 @@ export default class App extends Component {
     }
   };
 
+  rateMovie = (id, value) => {
+    this.setState(() => ({
+      loadingRated: true,
+    }));
+    this.movieService.rateMovie(id, value).then(() => {
+      this.setState(() => ({
+        loadingRated: false,
+      }));
+    });
+  };
+
   render() {
     const { films, loading, possibleValue, genres, triedSearch, filmsRated, loadingRated } = this.state;
 
@@ -112,11 +123,11 @@ export default class App extends Component {
           poster={film.poster_path}
           key={film.id}
           userRate={0}
-          rateMovie={this.movieService.rateMovie}
+          rateMovie={this.rateMovie}
         />
       ))
     ) : (
-      <Alert message="Info" description="Enter your search query above to start" type="info" showIcon />
+      <Alert message="Info" description="Rate movie to show" type="info" showIcon />
     );
     return (
       <MyContextProvider value={genres}>
@@ -151,6 +162,7 @@ export default class App extends Component {
             {
               label: 'Rated',
               key: 'rated',
+              disabled: loadingRated,
               children: (
                 <Layout style={{ height: 'unset', minHeight: '100%' }}>
                   <Content>{loadingRated ? <Spin indicator={loader} /> : filmsRatedDecrypted}</Content>

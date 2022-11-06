@@ -61,15 +61,15 @@ function Card({ title, releaseDate, overview, voteAverage, poster, genreIds, id,
             </div>
             <Progress
               type="circle"
-              percent={(voteAverage * 10).toFixed()}
-              format={(percent) => percent / 10}
+              percent={voteAverage * 10}
+              format={(percent) => (percent / 10).toFixed(1)}
               width={30}
               className={styles.progress}
               strokeColor={setProgressColor(voteAverage)}
             />
           </Header>
           <Content>
-            <Paragraph ellipsis={{ rows: 5 }}>{overview}</Paragraph>
+            <Paragraph ellipsis={{ rows: 3 }}>{overview}</Paragraph>
           </Content>
           <Footer>
             <Rate
